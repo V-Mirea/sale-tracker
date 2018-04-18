@@ -13,7 +13,7 @@ def createGui():
     content = ttk.Frame(root, padding=(10, 5), width=400, height=250)
     content.grid(column=0, row=0, sticky = (N, S, E, W))
 
-    addFrame = ttk.Frame(content, borderwidth=5)
+    addFrame = ttk.Frame(content, borderwidth=5, relief=SOLID)
     addFrame.grid(column=0, row=0)
     # ---v
     label1 = ttk.Label(addFrame, text="Title:")
@@ -53,11 +53,11 @@ def createGui():
     txtExp.grid(column=0, row=5)
 
     btnAdd = ttk.Button(addFrame, text='Add', command=addGame)
-    btnAdd.grid(column=0, row=6, columnspan=2, sticky=CENTER)
+    btnAdd.grid(column=0, row=6, columnspan=2)
     #-----------------------------------------------------
 
-    listFrame = ttk.Frame(content, )
-    listFrame.grid(column=1, row=0)
+    listFrame = ttk.Frame(content, borderwidth=5, relief=SOLID)
+    listFrame.grid(column=1, row=0, sticky=(N, S))
 
     gamesFrame = ttk.Frame(listFrame, borderwidth=5, relief="sunken", padding = 10)
     gamesFrame.grid(column=0, row=0)
