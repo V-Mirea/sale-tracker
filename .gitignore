@@ -1,3 +1,4 @@
 \dbenv
 \__pycache__
 *.pyproj
+*.sln
