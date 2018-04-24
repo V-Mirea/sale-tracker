@@ -1,0 +1,10 @@
+To-do list:
+	Short term:
+		Block duplicate entries
+
+	Longer term:
+		Change getPrice to scrape all of the info for a game
+			Have the list of games display the official, scraped name 
+		Find a way to scrape price off of game's store page instead of from search
+			If not possible, find a better way to specify the game you're looking for
+		Check multiple stores
