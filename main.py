@@ -44,13 +44,13 @@ def addGame():
         except (ValueError, IndexError):
             pass
 
-        db["games"].insert_one(entry)
+        col.insert_one(entry)
         lstGames.insert(END, title)
 
     clearForm()
 
 def deleteGame():
-    db["games"].find_one_and_delete({"title": lstGames.get(lstGames.curselection())})
+    col.find_one_and_delete({"title": lstGames.get(lstGames.curselection())})
     lstGames.delete(lstGames.curselection())
 
 # Takes string with game name and optional boolean for price to get
@@ -74,7 +74,7 @@ def getPrice(game, sale = True):
     return Decimal(price[1:]), price[0] # Remove currency sign, convert to number, and return, along with currency
 
 def populateGamesList():
-    games = db["games"].find()
+    games = col.find()
     for game in games:
         lstGames.insert(END, game["title"])
 
@@ -83,6 +83,9 @@ password = "passwordd"
     
 client = pymongo.MongoClient("mongodb+srv://" + username + ":" + password + "@cluster0-kaauu.mongodb.net")
 db = client['sale-tracker']
+
+clientID = getMac() # Get mac address of computer and use as a unique identifier
+col = db[str(clientID)] # Create a new collection for every user
 
 # Main window
 root = Tk()
@@ -151,7 +154,5 @@ gamesScrollbar.config(command=lstGames.yview)
 
 btnDelete = ttk.Button(listFrame, text='Delete', command=deleteGame)
 btnDelete.grid(column=0, row=1)
-
-messagebox.showinfo("", getMac())
 
 root.mainloop()

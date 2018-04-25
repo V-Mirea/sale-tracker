@@ -1,6 +1,7 @@
 To-do list:
 	Short term:
 		Block duplicate entries
+		Better input checking
 
 	Longer term:
 		Change getPrice to scrape all of the info for a game
