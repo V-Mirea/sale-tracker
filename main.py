@@ -2,6 +2,10 @@ import datetime
 import decimal
 from decimal import Decimal
 
+import sched # Scheduling price checcker
+from threading import Thread
+import time
+
 import pymongo
 
 from tkinter import *
@@ -12,6 +16,27 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
 from uuid import getnode as getMac
+
+def checkGame(game):
+    price = getPrice(game)
+    entry = col.find_one({"title": game})
+
+    if ("expiration" not in entry or entry["expiration"] < datetime.datetime.now()):
+        if (price[0] <= entry["price"]):
+            messagebox.showinfo("It's your lucky day!", game + " is on sale for " + price[1] + str(price[0]))
+            deleteGame(game)
+        else:
+            #print("No sale on " + game)
+            scheduleGame(game) # Reschedule the game if it's not on sale
+    else: # Delete the entry if the expiration has passed
+        deleteGame(game)
+
+def scheduleGame(game):
+    s = sched.scheduler(time.time, time.sleep)
+    s.enter(10, 1, checkGame, argument=(game,))
+
+    thread = Thread(target=s.run)
+    thread.start()
 
 def clearForm():
     for txtbox in filter(lambda w:isinstance(w, Entry), addFrame.children.values()):
@@ -49,9 +74,11 @@ def addGame():
 
     clearForm()
 
-def deleteGame():
-    col.find_one_and_delete({"title": lstGames.get(lstGames.curselection())})
-    lstGames.delete(lstGames.curselection())
+    scheduleGame(title)
+
+def deleteGame(title):
+    col.find_one_and_delete({"title": title})
+    lstGames.delete(lstGames.get(0, "end").index(title))
 
 # Takes string with game name and optional boolean for price to get
 # Returns price of given game and a character representing currency. Regular price or sale price depending on second argument
@@ -77,6 +104,7 @@ def populateGamesList():
     games = col.find()
     for game in games:
         lstGames.insert(END, game["title"])
+        checkGame(game["title"])
 
 username = "admin"
 password = "passwordd"
@@ -152,7 +180,7 @@ populateGamesList()
 lstGames.config(yscrollcommand=gamesScrollbar.set)
 gamesScrollbar.config(command=lstGames.yview)
 
-btnDelete = ttk.Button(listFrame, text='Delete', command=deleteGame)
+btnDelete = ttk.Button(listFrame, text='Delete', command= lambda: deleteGame(lstGames.get(lstGames.curselection())))
 btnDelete.grid(column=0, row=1)
 
 root.mainloop()
