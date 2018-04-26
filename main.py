@@ -21,14 +21,14 @@ def checkGame(game):
     price = getPrice(game)
     entry = col.find_one({"title": game})
 
-    if ("expiration" not in entry or entry["expiration"] < datetime.datetime.now()):
+    if ("expiration" not in entry or entry["expiration"] > datetime.datetime.now()):
         if (price[0] <= entry["price"]):
             messagebox.showinfo("It's your lucky day!", game + " is on sale for " + price[1] + str(price[0]))
             deleteGame(game)
         else:
-            #print("No sale on " + game)
             scheduleGame(game) # Reschedule the game if it's not on sale
     else: # Delete the entry if the expiration has passed
+        messagebox.showinfo("Expired", game + " has expired")
         deleteGame(game)
 
 def scheduleGame(game):
